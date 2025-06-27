@@ -1,10 +1,13 @@
-import { use, useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState, useRef } from "react";
 
 function App() {
   const [len, setLen] = useState(8); //*tkey=password *//
   const [num, setNum] = useState(false);
   const [char, setChar] = useState(false);
   const [key, setKey] = useState("");
+
+  /* userefhook */
+  const keyRef = useRef(null);
 
   //* useCallback(func,[])*//
   const keyGenertor = useCallback(() => {
@@ -20,29 +23,39 @@ function App() {
     setKey(tkey);
   }, [len, num, char, setKey]);
 
+  const copyPassword = useCallback(() => {
+    keyRef.current?.select();
+    window.navigator.clipboard.writeText(key);
+  }, [key]);
+
   useEffect(() => {
     keyGenertor();
   }, [len, num, char, keyGenertor]);
 
   return (
     <>
-      <div className="w-full max-w-md mx-auto shadow-md rounded-lg px-4 py-3 my-8 bg-gray-800 text-orange-500">
+      <div className="w-full max-w-md mx-auto shadow-md rounded-lg px-4 py-3 my-8 bg-gray-800 text-orange-500  ">
         {key}
       </div>
 
       <div className="flex shadow rounded-lg overflow-hidden mb-4 text-emerald-50">
         {/*  */}
 
-        <div className="flex shadow rounded-lg overflow-hidden mb-4">
+        <div className="  flex shadow text-amber-900 rounded-lg overflow-hidden mb-4 bg-amber-50">
           <input
             type="text"
             value={key}
             className="outline-none w-full py-1 px-3"
             placeholder="Password"
             readOnly
+            ref={keyRef}
+
             // ref={passwordRef}
           />
-          <button className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0">
+          <button
+            onClick={copyPassword}
+            className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0"
+          >
             copy
           </button>
         </div>
